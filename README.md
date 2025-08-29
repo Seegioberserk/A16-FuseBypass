@@ -89,7 +89,7 @@ This repository is presented in the interest of responsible research and transpa
 
 ## Disclaimer
 
-This repository is intended strictly for security research and vulnerability disclosure. Do not use this information to violate the security or integrity of any system. The authors do not condone or support misuse of this material.
+This repository is intended strictly for security research and vulnerability disclosure. Do not use this information to violate the security or integrity of any system. 
 
 ---
 
