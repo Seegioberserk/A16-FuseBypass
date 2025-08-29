@@ -1,2 +1,101 @@
-# A16-FuseBypass
-This repository discloses a critical vulnerability in Apple’s A16 Bionic chip, where debug logic is executed on production-fused devices (dev-fused=0, debug=0x0). Logs show SecureROM and co-processor debug paths active without jailbreak or user tampering—violating the silicon-level trust model.
+# **A16-FuseBypass: Debug Logic Enabled on Production Apple Silicon**
+
+## Overview
+
+This repository documents a critical hardware-level vulnerability in the Apple A16 Bionic chip used in iPhone 14 Pro Max and related devices. The flaw allows debug logic—meant strictly for development silicon—to be executed on production-fused devices (`dev-fused = 0`) running stock, unmodified iOS with `debug = 0x0`.
+
+No jailbreak. No provisioning profile. No tampering. Just flawed hardware trust enforcement.
+
+---
+
+## Summary of Findings
+
+* Device: iPhone 14 Pro Max (Apple A16 Bionic)
+* Fuse State: `dev-fused = 0` (production)
+* Boot Args: `debug = 0x0`
+* Expected: Debug logic should be permanently disabled
+* Observed: SecureROM, firmware, HAL, and co-processors execute debug routines
+
+---
+
+## Root Cause
+
+A breakdown in fuse enforcement logic and SecureROM privilege gating allows privileged debug pathways to activate despite the production configuration.
+
+This includes:
+
+* SecureROM granting debug privileges
+* Firmware injecting debug parameters into co-processors
+* HAL subsystems (e.g., AOP, DSP, Haptics) exposing diagnostics
+* Multiple SecureROM debug state transitions observed at runtime
+
+---
+
+## Why It Matters
+
+This is a silicon-level trust model failure—not a software bug or configuration oversight.
+
+Implications include:
+
+* Expanded attack surface for silicon introspection and fault injection
+* Leakage of privileged telemetry and internal co-processor configuration
+* Execution of SecureROM routines typically reserved for development builds
+* Potential vectors for exploitation by advanced persistent threats
+
+No assumptions about hardware trust enforcement on Apple Silicon can be considered safe if debug logic can persist in production.
+
+---
+
+## Contents
+
+* `logs/` – Raw and timestamped logs showing activation of debug routines on production-fused A16 devices
+* `analysis/` – Side-by-side breakdown of expected vs. observed hardware behavior
+* `reproduce/` – Step-by-step guide to validating the issue on a stock iPhone 14 Pro Max
+
+---
+
+## Steps to Validate
+
+This flaw has been confirmed on multiple unmodified devices running official iOS firmware. To independently validate:
+
+1. Use an iPhone 14 Pro Max with:
+
+   * `dev-fused = 0` (production-fused unit)
+   * `debug = 0x0` (stock iOS, unmodified)
+2. Boot the device normally
+3. Collect logs using:
+
+   * `log show` via macOS Terminal
+   * Console.app (on macOS)
+   * On-device diagnostics (if accessible)
+4. Inspect logs for:
+
+   * `corecaptureIsDebuggable` → debug privilege granted
+   * `PRRose::_triggerLogCollection` → unsolicited firmware logging
+   * `setConfigParameters: debugLevelParam` → debug params injected into co-processors
+   * `aophapticdebug interface active`, `DSP Debug1 enabled` → HAL debug interfaces active
+
+These findings contradict the expected behavior of production-fused hardware and confirm the vulnerability.
+
+---
+
+## Responsible Disclosure
+
+This repository is presented in the interest of responsible research and transparency. Disclosure to Apple and relevant security communities has been initiated or is recommended.
+
+---
+
+## Disclaimer
+
+This repository is intended strictly for security research and vulnerability disclosure. Do not use this information to violate the security or integrity of any system. The authors do not condone or support misuse of this material.
+
+---
+
+## Final Note
+
+The Apple A16 Bionic—widely considered a flagship secure silicon platform—exhibits a persistent, reproducible hardware enforcement failure. This undermines the foundational assumptions of Apple’s hardware trust model and highlights the need for rigorous audit of fuse enforcement mechanisms in all secure SoC designs.
+
+---
+
+
+
