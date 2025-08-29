@@ -6,6 +6,8 @@ This repository documents a critical hardware-level vulnerability in the Apple A
 
 No jailbreak. No provisioning profile. No tampering. Just flawed hardware trust enforcement.
 
+**Log Evidence:** https://ia600508.us.archive.org/22/items/a-16-chip-flaw/A16%20Chip%20Flaw.mov)
+
 ---
 
 ## Summary of Findings
