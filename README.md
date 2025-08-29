@@ -81,7 +81,7 @@ These findings contradict the expected behavior of production-fused hardware and
 
 ## Responsible Disclosure
 
-This repository is presented in the interest of responsible research and transparency. Disclosure to Apple and relevant security communities has been initiated or is recommended.
+This repository is presented in the interest of responsible research and transparency. 
 
 ---
 
